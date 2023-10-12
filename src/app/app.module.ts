@@ -5,9 +5,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CustomerComponent } from './customers/customer.component';
 import { FormsModule } from '@angular/forms';
+import { CustomerOneComponent } from './customers/customer-one.component';
 
 @NgModule({
-  declarations: [AppComponent, CustomerComponent],
+  declarations: [AppComponent, CustomerComponent, CustomerOneComponent],
   imports: [BrowserModule, AppRoutingModule, FormsModule],
   providers: [],
   bootstrap: [AppComponent],
