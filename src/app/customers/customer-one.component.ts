@@ -43,12 +43,16 @@ export class CustomerOneComponent implements OnInit {
   constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
-    // we use the formbuilder instance and call its group method. the group method allows us to define the set of controls and nested formGroups that are associated with the root FormGroup
+    // we use the formbuilder instance and call its root FormGroup method. the group method allows us to define the set of controls and nested formGroups that are associated with the root FormGroup
     this.customerForm = this.fb.group({
       // instaed of creating a new formcontrol instance, we simply set the default value to anything. here we add a validator
       firstName: ['', [Validators.required, Validators.minLength(3)]],
       lastName: ['', [Validators.required, Validators.maxLength(50)]],
-      email: ['', [Validators.required, Validators.email]],
+      // we defined a nested FormGroup for the FormControls that will be validated together
+      emailGroup: this.fb.group({
+        email: ['', [Validators.required, Validators.email]],
+        confirmEmail: ['', [Validators.required]],
+      }),
       phone: '',
       // we set rating to null because an empty string is not a good default for a numeric control and ratingRange as the custom validator
       rating: [null, ratingRange(1, 5)],
