@@ -9,6 +9,23 @@ import {
 
 import { Customer } from './customer';
 
+// we don't need any extra parameters, so we just use the simple validator function
+function emailMatcher(c: AbstractControl): { [key: string]: boolean } | null {
+  // we call the get method of the formGroup, define both the email and confirmEmail formControls
+  const emailControl = c.get('email');
+  const confirmControl = c.get('confirmEmail');
+  // if the FormControl has not been touched, return null and skip the validation
+  if (emailControl?.pristine !== confirmControl?.pristine) {
+    return null;
+  }
+  // we check the value of the email FormControl against the value of the confirmEmail FormControl. if the values match, we return null means we don't return an error message
+  if (emailControl?.value === confirmControl?.value) {
+    return null;
+  }
+  // if the values don't match, we return a key and value pair where the key is the name of the validaton rule and the value is true to add this rule to the errors collection for the FormGroup not the individual FormControls
+  return { match: true };
+}
+
 // this is a factory function that wraps another function. the function takes in the min and max acceptable values and returns a validator function (ValidatorFn)
 function ratingRange(min: number, max: number): ValidatorFn {
   // we can add our custom validator function above the component class because the validator will only be used by this component.
@@ -23,7 +40,7 @@ function ratingRange(min: number, max: number): ValidatorFn {
       // if so, we return the key and value pair specifying the name of the validation rule, we'll call it range and true to indicate that the validation rule was broken. the validation rule name is then added to the errors collection for the passed passed in FormControl
       return { range: true };
     }
-    // if the control is valid, we return null
+    // if the control is valid, we return null, meaning no error message
     return null;
   };
 }
@@ -48,11 +65,14 @@ export class CustomerOneComponent implements OnInit {
       // instaed of creating a new formcontrol instance, we simply set the default value to anything. here we add a validator
       firstName: ['', [Validators.required, Validators.minLength(3)]],
       lastName: ['', [Validators.required, Validators.maxLength(50)]],
-      // we defined a nested FormGroup for the FormControls that will be validated together
-      emailGroup: this.fb.group({
-        email: ['', [Validators.required, Validators.email]],
-        confirmEmail: ['', [Validators.required]],
-      }),
+      // we defined a nested FormGroup for the FormControls that will be validated together. we later pass an object with a validator property(validator: emailMatcher)
+      emailGroup: this.fb.group(
+        {
+          email: ['', [Validators.required, Validators.email]],
+          confirmEmail: ['', [Validators.required]],
+        },
+        { validator: emailMatcher }
+      ),
       phone: '',
       // we set rating to null because an empty string is not a good default for a numeric control and ratingRange as the custom validator
       rating: [null, ratingRange(1, 5)],
