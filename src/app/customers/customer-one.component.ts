@@ -4,20 +4,28 @@ import {
   FormBuilder,
   Validators,
   AbstractControl,
+  ValidatorFn,
 } from '@angular/forms';
 
 import { Customer } from './customer';
 
-// we can add our custom validator function above the component class because the validator will only be used by this component.
-// to allow a formControl or a formgroup, we specify AbstractControl here
-function ratingRange(c: AbstractControl): { [key: string]: boolean } | null {
-  // we check if the AbstractControl has a value that is not null, is not a number, is less than 1, or greater than 5
-  if (c.value !== null && (isNaN(c.value) || c.value < 1 || c.value > 5)) {
-    // if so, we return the key and value pair specifying the name of the validation rule, we'll call it range and true to indicate that the validation rule was broken. the validation rule name is then added to the errors collection for the passed passed in FormControl
-    return { range: true };
-  }
-  // if the control is valid, we return null
-  return null;
+// this is a factory function that wraps another function. the function takes in the min and max acceptable values and returns a validator function (ValidatorFn)
+function ratingRange(min: number, max: number): ValidatorFn {
+  // we can add our custom validator function above the component class because the validator will only be used by this component.
+  // to allow a formControl or a formgroup, we specify AbstractControl here
+  // this is the return validator function
+  return (c: AbstractControl): { [key: string]: boolean } | null => {
+    // we check if the AbstractControl has a value that is not null, is not a number, is less than 1, or greater than 5
+    if (
+      c.value !== null &&
+      (isNaN(c.value) || c.value < min || c.value > max)
+    ) {
+      // if so, we return the key and value pair specifying the name of the validation rule, we'll call it range and true to indicate that the validation rule was broken. the validation rule name is then added to the errors collection for the passed passed in FormControl
+      return { range: true };
+    }
+    // if the control is valid, we return null
+    return null;
+  };
 }
 
 @Component({
@@ -43,7 +51,7 @@ export class CustomerOneComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       phone: '',
       // we set rating to null because an empty string is not a good default for a numeric control and ratingRange as the custom validator
-      rating: [null, ratingRange],
+      rating: [null, ratingRange(1, 5)],
       // this is for the set of radio buttons and we don't need to put validation here
       notification: 'email',
       // the default value for sendCatalog is true
