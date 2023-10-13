@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder } from '@angular/forms';
 
 import { Customer } from './customer';
 
@@ -14,17 +14,28 @@ export class CustomerOneComponent implements OnInit {
   // customer is a data model and its passed to and from a back-end server
   customer = new Customer();
 
-  constructor() {}
+  // inject the formbuilder instance using the constructor parameter
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
-    // the code below creates an instance of the FormGroup and assigns it to the customerForm property
-    this.customerForm = new FormGroup({
-      // we add a FormControl for each input element in the template's form
-      firstName: new FormControl(),
-      lastName: new FormControl(),
-      email: new FormControl(),
+    // we use the formbuilder instance and call its group method. the group method allows us to define the set of controls and nested formGroups that are associated with the root FormGroup
+    this.customerForm = this.fb.group({
+      // instaed of creating a new formcontrol instance, we simply set the default value to anything
+      firstName: '',
+      lastName: '',
+      email: '',
       // the default value for sendCatalog is true
-      sendCatalog: new FormControl(true),
+      sendCatalog: true,
+    });
+  }
+
+  // in the method below, we use setValue to update each of the values in the form model and its required that we set all formControls on the form but we can use patchValue to just set a subset of all values
+  populateTestData(): void {
+    this.customerForm.setValue({
+      firstName: 'Jack',
+      lastName: 'Harkness',
+      email: 'jack@forwood.com',
+      sendCatalog: false,
     });
   }
 
