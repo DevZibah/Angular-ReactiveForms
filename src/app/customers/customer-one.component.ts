@@ -81,6 +81,11 @@ export class CustomerOneComponent implements OnInit {
       // the default value for sendCatalog is true
       sendCatalog: true,
     });
+
+    // we want to start watching as soon as the app is initialised thats why this code is in ngOnit method. Note that this code must be after thr definition of the root FormGroup above, otherwise, this code will be null. This code below to to start watching for changes in the send notifications radio buttons. when a change occurs, we get the value of the notification FormControl
+    this.customerForm
+      .get('notification')
+      ?.valueChanges.subscribe((value) => console.log(value));
   }
 
   // in the method below, we use setValue to update each of the values in the form model and its required that we set all formControls on the form but we can use patchValue to just set a subset of all values
