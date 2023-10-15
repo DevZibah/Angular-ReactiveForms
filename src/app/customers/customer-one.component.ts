@@ -7,6 +7,7 @@ import {
   ValidatorFn,
 } from '@angular/forms';
 
+import { debounce, debounceTime } from 'rxjs/operators';
 import { Customer } from './customer';
 
 // we don't need any extra parameters, so we just use the simple validator function
@@ -100,9 +101,10 @@ export class CustomerOneComponent implements OnInit {
     // first we define a variable(emailControl) for a reference to the email formControl. we call a setMessage method and pass in the FormControl which will determine the right validation message to display
     const emailControl = this.customerForm.get('emailGroup.email');
     // we add a watcher for the FormControl.
-    emailControl?.valueChanges.subscribe((value) =>
-      this.setMessage(emailControl)
-    );
+    emailControl?.valueChanges
+    // we call the debounceTime operator on the observable here and specify the desired wait time(1s => 1000ms)
+      .pipe(debounceTime(1000))
+      .subscribe((value) => this.setMessage(emailControl));
   }
 
   // in the method below, we use setValue to update each of the values in the form model and its required that we set all formControls on the form but we can use patchValue to just set a subset of all values
