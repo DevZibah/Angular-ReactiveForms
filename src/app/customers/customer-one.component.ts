@@ -56,6 +56,15 @@ export class CustomerOneComponent implements OnInit {
   // customer is a data model and its passed to and from a back-end server
   customer = new Customer();
 
+  // this contains validation message to display to the user
+  emailMessage!: string;
+
+  // this is a data structure (object) to store the validation error messages
+  private validationMessages: any = {
+    required: 'Please enter your email address.',
+    email: 'Please enter a valid email address.',
+  };
+
   // inject the formbuilder instance using the constructor parameter
   constructor(private fb: FormBuilder) {}
 
@@ -87,6 +96,13 @@ export class CustomerOneComponent implements OnInit {
     this.customerForm
       .get('notification')
       ?.valueChanges.subscribe((value) => this.setNotification(value));
+
+    // first we define a variable(emailControl) for a reference to the email formControl. we call a setMessage method and pass in the FormControl which will determine the right validation message to display
+    const emailControl = this.customerForm.get('emailGroup.email');
+    // we add a watcher for the FormControl.
+    emailControl?.valueChanges.subscribe((value) =>
+      this.setMessage(emailControl)
+    );
   }
 
   // in the method below, we use setValue to update each of the values in the form model and its required that we set all formControls on the form but we can use patchValue to just set a subset of all values
@@ -102,6 +118,19 @@ export class CustomerOneComponent implements OnInit {
   save() {
     console.log(this.customerForm);
     console.log('Saved: ' + JSON.stringify(this.customerForm.value));
+  }
+
+  //
+  setMessage(c: AbstractControl): void {
+    // the code below clears any message because the most recent change to the input element could cause all of the validation rule to pass. this is literally just to avoid any leftover messages showing
+    this.emailMessage = '';
+    // here, we want to display a validation message if the associated input element was touched or dirty and the formcontrol has validation errors
+    if ((c.touched || c.dirty) && c.errors) {
+      // we use the Object.keys method to return an array of the validation error's collection keys. we literally map into the validatonMessages data structure
+      this.emailMessage = Object.keys(c.errors)
+        .map((key) => this.validationMessages[key])
+        .join('');
+    }
   }
 
   // this method takes in a string definiing which radio button was clicked and it returns a void
