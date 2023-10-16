@@ -90,6 +90,13 @@ export class CustomerOneComponent implements OnInit {
       notification: 'email',
       // the default value for sendCatalog is true
       sendCatalog: true,
+      // here, we add FormControls for each address block input element to our form model using the FormBuilder
+      addressType: 'home',
+      street1: '',
+      street2: '',
+      city: '',
+      state: '',
+      zip: '',
     });
 
     // we want to start watching as soon as the app is initialised thats why this code is in ngOnit method. Note that this code must be after thr definition of the root FormGroup above, otherwise, this code will be null. This code below to to start watching for changes in the send notifications radio buttons. when a change occurs, we get the value(in this case, it's either email or text) of the notification FormControl
