@@ -117,7 +117,12 @@ export class CustomerOneComponent implements OnInit {
       .subscribe((value) => this.setMessage(emailControl));
   }
 
-  // in this method, we return the FormGroup for our address block. we call this method anytime we want to create an instance of the FormGroup
+  // in this method, we simply push a new instance of the FormGroup onto our addresses FormArray
+  addAddress(): void {
+    this.addresses.push(this.buildAddress());
+  }
+
+  // in this method, we return the FormGroup for our address block. we call this method anytime we want to create an instance of the FormGroup and add it to our FormArray
   buildAddress(): FormGroup {
     return this.fb.group({
       // here, we add FormControls for each address block input element to our form model using the FormBuilder
