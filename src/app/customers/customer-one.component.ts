@@ -90,16 +90,8 @@ export class CustomerOneComponent implements OnInit {
       notification: 'email',
       // the default value for sendCatalog is true
       sendCatalog: true,
-      // here, the address block is now on its own nested FormGroup
-      addresses: this.fb.group({
-        // here, we add FormControls for each address block input element to our form model using the FormBuilder
-        addressType: 'home',
-        street1: '',
-        street2: '',
-        city: '',
-        state: '',
-        zip: '',
-      }),
+      // here, this calls the buildAddress method
+      addresses: this.buildAddress(),
     });
 
     // we want to start watching as soon as the app is initialised thats why this code is in ngOnit method. Note that this code must be after thr definition of the root FormGroup above, otherwise, this code will be null. This code below to to start watching for changes in the send notifications radio buttons. when a change occurs, we get the value(in this case, it's either email or text) of the notification FormControl
@@ -115,6 +107,19 @@ export class CustomerOneComponent implements OnInit {
       // we call the debounceTime operator on the observable here and specify the desired wait time(1s => 1000ms)
       .pipe(debounceTime(1000))
       .subscribe((value) => this.setMessage(emailControl));
+  }
+
+  // in this method, we return the FormGroup for our address block. we call this method anytime we want to create an instance of the FormGroup
+  buildAddress(): FormGroup {
+    return this.fb.group({
+      // here, we add FormControls for each address block input element to our form model using the FormBuilder
+      addressType: 'home',
+      street1: '',
+      street2: '',
+      city: '',
+      state: '',
+      zip: '',
+    });
   }
 
   // in the method below, we use setValue to update each of the values in the form model and its required that we set all formControls on the form but we can use patchValue to just set a subset of all values
