@@ -5,9 +5,10 @@ import {
   Validators,
   AbstractControl,
   ValidatorFn,
+  FormArray,
 } from '@angular/forms';
 
-import { debounce, debounceTime } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
 import { Customer } from './customer';
 
 // we don't need any extra parameters, so we just use the simple validator function
@@ -60,6 +61,13 @@ export class CustomerOneComponent implements OnInit {
   // this contains validation message to display to the user
   emailMessage!: string;
 
+  // this is a property getter. we define the proprty as a function. this getter returns a FormArray.
+  // we use the customerForm.get method to get the reference to the FormArray and return it.
+  // we use this cast operator(<FormArray>) to cast it to a desired type; otherwise, the type is an AbstractControl
+  get addresses(): FormArray {
+    return <FormArray>this.customerForm.get('addresses');
+  }
+
   // this is a data structure (object) to store the validation error messages
   private validationMessages: any = {
     required: 'Please enter your email address.',
@@ -90,8 +98,8 @@ export class CustomerOneComponent implements OnInit {
       notification: 'email',
       // the default value for sendCatalog is true
       sendCatalog: true,
-      // here, this calls the buildAddress method
-      addresses: this.buildAddress(),
+      // here, we want the array to initially contain one instance of our address block FormGroup, so we call the buildAddress method here to create the first instance of our FormGroup and aasign it as the first element(i.e 0) of the array.
+      addresses: this.fb.array([this.buildAddress()]),
     });
 
     // we want to start watching as soon as the app is initialised thats why this code is in ngOnit method. Note that this code must be after thr definition of the root FormGroup above, otherwise, this code will be null. This code below to to start watching for changes in the send notifications radio buttons. when a change occurs, we get the value(in this case, it's either email or text) of the notification FormControl
