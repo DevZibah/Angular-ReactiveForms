@@ -90,13 +90,16 @@ export class CustomerOneComponent implements OnInit {
       notification: 'email',
       // the default value for sendCatalog is true
       sendCatalog: true,
-      // here, we add FormControls for each address block input element to our form model using the FormBuilder
-      addressType: 'home',
-      street1: '',
-      street2: '',
-      city: '',
-      state: '',
-      zip: '',
+      // here, the address block is now on its own nested FormGroup
+      addresses: this.fb.group({
+        // here, we add FormControls for each address block input element to our form model using the FormBuilder
+        addressType: 'home',
+        street1: '',
+        street2: '',
+        city: '',
+        state: '',
+        zip: '',
+      }),
     });
 
     // we want to start watching as soon as the app is initialised thats why this code is in ngOnit method. Note that this code must be after thr definition of the root FormGroup above, otherwise, this code will be null. This code below to to start watching for changes in the send notifications radio buttons. when a change occurs, we get the value(in this case, it's either email or text) of the notification FormControl
@@ -109,7 +112,7 @@ export class CustomerOneComponent implements OnInit {
     const emailControl = this.customerForm.get('emailGroup.email');
     // we add a watcher for the FormControl.
     emailControl?.valueChanges
-    // we call the debounceTime operator on the observable here and specify the desired wait time(1s => 1000ms)
+      // we call the debounceTime operator on the observable here and specify the desired wait time(1s => 1000ms)
       .pipe(debounceTime(1000))
       .subscribe((value) => this.setMessage(emailControl));
   }
